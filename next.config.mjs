@@ -7,6 +7,18 @@ const nextConfig = {
       {
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        hostname: "wallpaperaccess.com",
+      },
+      {
+        hostname: "api.dicebear.com",
+      },
+      {
+        hostname:  "jooinn.com",
+      },
+      {
+        hostname: "www.ggg.jpg",
+      }
     ],
   },
 };

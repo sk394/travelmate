@@ -1,7 +1,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {MapPin, Search, Star} from "lucide-react"
+import { MapPin, Search, Star } from "lucide-react"
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import FooterAll from "@/components/footer/footer-all";
@@ -11,42 +11,44 @@ export default function Page() {
   return (
     <div className="min-h-screen w-full flex flex-col">
       <div className="relative h-screen">
-        <video 
-          autoPlay 
-          loop 
-          muted 
+        <video
+          autoPlay
+          loop
+          muted
           className="absolute inset-0 w-full h-full object-cover"
         >
           <source src="/travel.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        
+
         {/* Navbar */}
         <header className="relative z-10 flex justify-between items-center p-4">
           <h1 className="text-3xl font-bold text-white">TravelMate</h1>
-          <Link href="/login" className={cn(buttonVariants({variant: "outline"}))}>
-             Login
+          <Link href="/login" className={cn(buttonVariants({ variant: "outline" }))}>
+            Login
           </Link>
+
+
         </header>
-        
+
         {/* Hero Content */}
         <div className="relative z-10 h-full flex flex-col justify-center items-center text-white p-4">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center">Explore with a Local Guide</h2>
-          
+
           <div className="w-full max-w-lg mb-6">
             <div className="flex">
-              <Input 
-                type="text" 
+              <Input
+                type="text"
                 className="rounded-l-md border-white bg-white/20 text-white placeholder-white/70 focus:bg-white/30 focus:placeholder-white/50"
-                placeholder="Where do you want to go?" 
+                placeholder="Where do you want to go?"
               />
               <Button className="rounded-l-none bg-white text-black hover:bg-white/90">
                 <Search className="mr-2 h-4 w-4" /> Find Guides
               </Button>
             </div>
           </div>
-          
+
           <div className="flex items-center justify-center text-white/90">
             <MapPin className="mr-2 h-4 w-4" />
             <p>Popular Destinations: Paris, Tokyo, New York, Rome, Sydney</p>

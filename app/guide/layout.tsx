@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description: 'Explore with a Local Guide',
 };
 
-export default function DashboardLayout({
+export default function GuideLayout({
     children
 }: {
     children: React.ReactNode;
@@ -17,15 +17,15 @@ export default function DashboardLayout({
     return (
         <>
             <div className="flex">
-            <Sidebar />
-            <main className="w-full flex-1 overflow-hidden px-4 py-4">
-                <Header />
-                {children}    
-            </main>
+                <Sidebar />
+                <main className="w-full flex-1 overflow-hidden px-4 py-4">
+                    <Header />
+                    {children}
+                </main>
             </div>
             <div className="flex flex-col">
-            <Separator />
-            <FooterAll />
+                <Separator />
+                <FooterAll />
             </div>
         </>
     );

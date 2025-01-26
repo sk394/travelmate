@@ -40,7 +40,7 @@ npx create-next-app@latest --ts
 npm i @supabase/auth-helpers-nextjs @supabase/supabase-js
 
 // Get types for tables from supabase cli using
-npx supabase gen types typescript --project-id oshbfhevcsvvxhxajeeb > lib/database.types.ts
+npx supabase gen types typescript --project-id xfwmosaoklbnxqmtuqve > lib/database.types.ts
 
 for id go to project settings and copy referce id
 // everytime you add or modify the database run, this above code
