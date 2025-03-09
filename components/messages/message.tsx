@@ -1,6 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Message({ message, isCurrentUser }: { message: MessageWithProfile; isCurrentUser: boolean }) {
 
@@ -12,13 +13,17 @@ export default function Message({ message, isCurrentUser }: { message: MessageWi
             )}
         >
             <div className="flex-shrink-0">
-                <Image
-                    src={message.user.avatar_url ?? "/avatar.png"}
-                    alt={message.user.full_name}
-                    width={40}
-                    height={40}
-                    className="rounded-full ring-2 ring-primary/20"
-                />
+                <Link
+                    href={message.user.role === "traveler" ? `/traveler/profile/${message.sender_id}` : `/guide/profile/${message.sender_id}`}
+                >
+                    <Image
+                        src={message.user.avatar_url ?? "/avatar.png"}
+                        alt={message.user.full_name}
+                        width={40}
+                        height={40}
+                        className="rounded-full ring-2 ring-primary/20"
+                    />
+                </Link>
             </div>
             <div
                 className={cn(

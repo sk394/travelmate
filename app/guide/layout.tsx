@@ -1,8 +1,6 @@
-import FooterAll from '@/components/footer/footer-all';
 import Header from '@/components/dashboard/header';
-import Sidebar from '@/components/dashboard/sidebar';
 import type { Metadata } from 'next';
-import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
     title: 'TravelMate',
@@ -16,16 +14,14 @@ export default function GuideLayout({
 }) {
     return (
         <>
-            <div className="flex">
-                <Sidebar />
+            <div className="flex h-screen">
+                <Link href="/guide" className="flex p-5 justify-start">
+                    <h4 className="text-2xl font-semibold text-zinc-900 dark:text-white">TravelMate</h4>
+                </Link>
                 <main className="w-full flex-1 overflow-hidden px-4 py-4">
                     <Header />
                     {children}
                 </main>
-            </div>
-            <div className="flex flex-col">
-                <Separator />
-                <FooterAll />
             </div>
         </>
     );

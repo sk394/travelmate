@@ -1,15 +1,22 @@
+import { cancelTrip, completeTrip } from "@/app/actions/trip-action";
 import ChatInput from "@/components/messages/chat-input";
 import ChatMessages from "@/components/messages/chat-messages";
+import FinalizeTrip from "@/components/messages/finalize-trip";
+import { Button } from "@/components/ui/button";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 
-export default async function MessagesPage({ params }: { params: { bid_id: string } }) {
+export default async function MessagesPage({ params, searchParams }: { params: { bid_id: string }; searchParams: { [key: string]: string } }) {
+    // get query params
+    const { trip_id } = await searchParams;
+
     const supabase = createServerComponentClient<Database>({ cookies });
     const { data: { session } } = await supabase.auth.getSession();
 
     const { data } = await supabase.from('profiles').select().eq('id', session?.user.id ?? "").single();
+
 
     if (!data) {
         notFound();
@@ -24,6 +31,7 @@ export default async function MessagesPage({ params }: { params: { bid_id: strin
                             <div>
                                 <h1 className="text-xl font-bold">Messages</h1>
                             </div>
+                            <FinalizeTrip tripId={trip_id} />
                             <div>
                                 <h1 className="text-sm text-gray-400">Chat with your guide</h1>
                             </div>
@@ -36,7 +44,7 @@ export default async function MessagesPage({ params }: { params: { bid_id: strin
                         </>
                     ) : <h1>You have to accept bids first to enable chat</h1>}
                 </div>
-            </div>
+            </div >
         </>
     );
 }

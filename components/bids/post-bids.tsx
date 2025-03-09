@@ -101,7 +101,7 @@ export default function BidPost({ tripId }: { tripId: string }) {
                                         if (bid.status === 'pending') {
                                             await acceptBid(bid.id)
                                         } else if (bid.status === 'accepted') {
-                                            router.push(`/traveler/messages/${bid.id}`)
+                                            router.push(`/traveler/messages/${bid.id}?trip_id=${tripId}`)
                                         } else {
                                             console.log("Bid Rejected")
                                         }

@@ -67,6 +67,7 @@ export type Database = {
           gender: Database["public"]["Enums"]["gender_type"] | null
           id: string
           languages: string[] | null
+          num_of_ratings: number | null
           phone_number: string | null
           photo_urls: string[] | null
           primary_locations: string[]
@@ -83,6 +84,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_type"] | null
           id: string
           languages?: string[] | null
+          num_of_ratings?: number | null
           phone_number?: string | null
           photo_urls?: string[] | null
           primary_locations: string[]
@@ -99,6 +101,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_type"] | null
           id?: string
           languages?: string[] | null
+          num_of_ratings?: number | null
           phone_number?: string | null
           photo_urls?: string[] | null
           primary_locations?: string[]
@@ -308,6 +311,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      can_complete_trip: {
+        Args: {
+          trip_id_param: string
+        }
+        Returns: boolean
+      }
       get_highest_bid: {
         Args: {
           trip_id_param: string
@@ -330,7 +339,7 @@ export type Database = {
     Enums: {
       bid_status: "pending" | "accepted" | "rejected"
       gender_type: "male" | "female" | "other" | "prefer_not_to_say"
-      trip_status: "posted" | "accepted" | "completed" | "canceled"
+      trip_status: "posted" | "accepted" | "completed" | "canceled" | "pending"
       user_role: "traveler" | "guide" | "unassigned"
     }
     CompositeTypes: {

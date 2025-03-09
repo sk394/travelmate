@@ -1,10 +1,10 @@
-import GuideProfile from "@/components/guide/guide-profile";
+import TravelerProfilePage from "@/components/traveler-profile/profile";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ params }: { params: { sender_id: string } }) {
     const supabase = createServerComponentClient<Database>({ cookies });
     const {
         data: { session },
@@ -14,17 +14,16 @@ export default async function ProfilePage() {
         redirect("/login");
     }
 
-    const { data } = await supabase.from('guides').select().eq('id', session.user.id).single();
+    const { data } = await supabase.from('travelers').select().eq('id', params?.sender_id).single();
 
     if (!data) {
-        return <div>Not Authorized!</div>
+        notFound();
     }
 
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <GuideProfile guide={data} />
+            <TravelerProfilePage traveler={data} userId={session.user.id} showEdit={session.user.id === params.sender_id} />
         </Suspense>
     );
 }
-

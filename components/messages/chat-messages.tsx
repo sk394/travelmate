@@ -12,11 +12,11 @@ export default async function ChatMessages({ userId, bidId }: { userId: string; 
         .select(`*, 
             user:profiles!messages_sender_id_fkey(
                 full_name,
-                avatar_url)`)
+                avatar_url,
+                role)`)
         .eq('bid_id', bidId)
         .range(0, 100)
         .order('created_at', { ascending: false });
-
 
     return (
         <Suspense fallback={"loading.."}>

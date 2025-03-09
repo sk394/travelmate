@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import PostsFilter from "@/components/guide/post-filter";
 import TravellerPosts from "@/components/guide/traveler-posts";
 
-export default async function DashboardPage() {
+type SearchParams = { [key: string]: string | string[] | undefined };
+export default async function DashboardPage({ searchParams }: { searchParams: SearchParams }) {
     const supabase = createServerComponentClient<Database>({ cookies });
     const {
         data: { session },
@@ -13,13 +14,27 @@ export default async function DashboardPage() {
     if (!session) {
         return redirect("/login");
     }
+    const { data: isGuide } = await supabase.from('guides').select().eq('id', session.user.id).single();
 
-    const { data, error } = await supabase.from('trips').select(`*, bids(*)`).eq('bids.guide_id', session.user.id)
-        // .rangeAdjacent('during', '[2000-01-01 12:00, 2000-01-01 13:00)')
-        // .filter('destination', 'in', ['Paris', 'London', 'New York'])
-        // .is('destination', null)
-        .order('created_at', { ascending: false });
+    if (!isGuide) {
+        return <div>Not Authorized!</div>
+    }
 
+    const location = searchParams?.location ?? null;
+    const startDate = searchParams?.startDate ?? null;
+    const endDate = searchParams?.endDate ?? null;
+    console.log(searchParams);
+    let query = supabase.from('trips').select(`*, bids(*)`).eq('bids.guide_id', session.user.id).order('created_at', { ascending: false });
+
+    if (location) {
+        query = query.ilike('destination', `%${location}%`);
+    }
+
+    if (startDate && endDate) {
+        query = query.gte('start_date', `${startDate}`).lte('end_date', `${endDate}`);
+    }
+    const { data, error } = await query;
+    console.log(data)
     return (
 
         <>

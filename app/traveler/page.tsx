@@ -1,5 +1,5 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import TripForm from "@/components/trips/trip-form";
 import { Suspense } from "react";
@@ -36,7 +36,7 @@ export default async function DashboardPage() {
 
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="flex flex-1 justify-center items-center">
         <TripForm />
       </div>
@@ -44,12 +44,11 @@ export default async function DashboardPage() {
         {trips.length !== 0 ? <TripPost posts={trips} /> :
           <div className="flex flex-col items-center justify-center mt-10  w-1/3 gap-y-3">
             <h1 className="text-5xl font-semibold ">Uncharted Destinations Await –: </h1>
-            <h3 className="flex text-nowrap text-6xl font-bold">Plan Your First Trip!
-            </h3>
+            <h3 className="text-6xl font-bold">Plan Your First Trip!</h3>
 
           </div>}
       </div>
-    </>
+    </Suspense>
 
   )
 }

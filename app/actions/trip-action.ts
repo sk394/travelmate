@@ -4,6 +4,7 @@ import { tripSchema } from "@/lib/schema";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 type TripFormData = z.infer<typeof tripSchema>;
@@ -60,4 +61,37 @@ export async function updateTrip(tripId: string, tripDescription: string) {
     }
 
     revalidatePath('/traveler');
+}
+
+export async function completeTrip(tripId: string) {
+    const supabase = createServerComponentClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    const { error } = await supabase.rpc('can_complete_trip', { trip_id_param: tripId });
+
+    if (error) {
+        throw error;
+    }
+
+    redirect('/traveler/payment');
+}
+
+export async function cancelTrip(tripId: string) {
+    const supabase = createServerComponentClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+    const { error } = await supabase.rpc('can_cancel_trip', { trip_id_param: tripId });
+
+    if (error) {
+        throw error;
+    }
+
+    redirect('/traveler');
 }

@@ -15,15 +15,15 @@ export default async function ProfilePage() {
   }
 
   const { data } = await supabase.from('travelers').select().eq('id', session.user.id).single();
+  const { data: tripInfo } = await supabase.from('trips').select("destination").eq('traveler_id', session.user.id).eq('status', 'completed');
 
   if (!data) {
     notFound();
   }
 
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <TravelerProfilePage traveler={data} userId={session.user.id} />
+      <TravelerProfilePage traveler={data} userId={session.user.id} tripInfo={tripInfo ?? []} showEdit={true} />
     </Suspense>
   );
 }

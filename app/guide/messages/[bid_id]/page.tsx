@@ -24,6 +24,7 @@ export default async function MessagesPage({ params }: { params: { bid_id: strin
                             <div>
                                 <h1 className="text-xl font-bold">Messages</h1>
                             </div>
+
                             <div>
                                 <h1 className="text-sm text-gray-400">Chat with traveler</h1>
                             </div>

@@ -2,13 +2,18 @@
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Camera, Verified } from "lucide-react";
+import { Camera, Star, Verified } from "lucide-react";
+import { useState } from "react";
+import { updateRating } from "@/app/actions/profile-actions";
 
-export default function GuideProfile({ guide }: { guide: Guides }) {
-
+export default function GuideProfile({ guide, isGuide }: { guide: Guides; isGuide?: boolean }) {
+    const [selectedRating, setSelectedRating] = useState<number>(0)
+    const [hoveredRating, setHoveredRating] = useState<number | null>(null)
+    const displayRating = hoveredRating ?? selectedRating ?? 0;
     async function handleAddPhoto() {
         console.log("Add photo");
     }
+
     return (
         <div className="container mx-auto max-w-4xl py-8 px-4" >
             <Card className="overflow-hidden">
@@ -56,6 +61,9 @@ export default function GuideProfile({ guide }: { guide: Guides }) {
                                     <div className="flex items-center">
                                         <Progress value={guide?.average_rating || 0 * 20} className="w-24" />
                                         <span className="ml-2 text-sm text-muted-foreground">/ 5.0</span>
+                                        <span className="font-semibold text-muted-foreground ml-2">
+                                            ({guide?.num_of_ratings || 0} ratings)
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -72,17 +80,46 @@ export default function GuideProfile({ guide }: { guide: Guides }) {
                                     className="w-full h-48 object-cover rounded-lg shadow-lg hover:blur-sm"
                                 />
                             ))}
-                            <Button
+                            {isGuide && <Button
                                 onClick={handleAddPhoto}
                                 className="w-full h-48 flex flex-col items-center justify-center text-muted-foreground hover:text-foreground border-2 border-dashed border-muted-foreground hover:border-foreground rounded-lg transition-colors"
                             >
                                 <Camera className="w-8 h-8 mb-2" />
                                 Add New Photo
-                            </Button>
+                            </Button>}
+                            {!isGuide &&
+                                // Rating and review section
+                                <div className="mt-8">
+                                    <p>Provide rating to this guide</p>
+                                    {[1, 2, 3, 4, 5].map((rating) => (
+                                        <button
+                                            key={rating}
+                                            type="button"
+                                            onClick={() => setSelectedRating(rating)}
+                                            onMouseEnter={() => setHoveredRating(rating)}
+                                            onMouseLeave={() => setHoveredRating(null)}
+                                            className="transition-all duration-200 focus:outline-none"
+                                            aria-label={`Rate ${rating} stars`}
+                                        >
+                                            <Star
+                                                className={`h-6 w-6 ${rating <= displayRating ? "fill-yellow-400 text-yellow-400" : "fill-transparent text-muted-foreground"
+                                                    } transition-all`}
+                                            />
+                                        </button>
+                                    ))}
+                                    <Button onClick={async () => {
+                                        await updateRating(selectedRating, guide?.id, guide.num_of_ratings || 0, guide.average_rating || 0);
+                                        setSelectedRating(0);
+                                    }} className="mt-4">
+                                        Submit Rating
+                                    </Button>
+                                </div>
+                            }
                         </div>
+
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     )
 }

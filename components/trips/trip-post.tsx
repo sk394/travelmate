@@ -54,7 +54,7 @@ export default function TripPost({
     return (
         <>
             {posts.map((post) => (
-                <div key={post.id} className="rounded-lg overflow-hidden w-1/2 bg-white dark:bg-slate-800 ring-1 ring-slate-900/5 shadow-xl">
+                <div key={post.id} className="rounded-lg  w-1/2 bg-white dark:bg-slate-800 ring-1 ring-slate-900/5 shadow-xl">
                     <div className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Avatar>

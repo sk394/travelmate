@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,16 +13,53 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function PostsFilter() {
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
+
     const [location, setLocation] = useState("")
     const [startDate, setStartDate] = useState<Date>()
     const [endDate, setEndDate] = useState<Date>()
 
-    const handleFilter = () => {
-        console.log("Filtering with:", { location, startDate, endDate })
-        // Implement your filtering logic here
-    }
+    // Check if filters are currently active
+    const areFiltersActive = !!searchParams.get("location") || !!searchParams.get("startDate") || !!searchParams.get("endDate");
+
+    const handleApplyFilters = () => {
+        const params = new URLSearchParams(searchParams);
+
+        if (areFiltersActive) {
+            params.delete("location");
+            params.delete("startDate");
+            params.delete("endDate");
+        } else {
+            // Update location filter
+            if (location) {
+                params.set("location", location);
+            } else {
+                params.delete("location");
+            }
+
+            // Update start date filter
+            if (startDate) {
+                params.set("startDate", startDate.toISOString().split('T')[0]);
+            } else {
+                params.delete("startDate");
+            }
+
+            // Update end date filter
+            if (endDate) {
+                params.set("endDate", endDate.toISOString().split('T')[0]);
+            } else {
+                params.delete("endDate");
+            }
+        }
+        replace(`${pathname}?${params.toString()}`);
+
+    };
 
     return (
         <div className="container mx-auto p-4">
@@ -33,8 +70,8 @@ export default function PostsFilter() {
                         <Input
                             id="location"
                             placeholder="Search for location"
-                            value={location}
                             onChange={(e) => setLocation(e.target.value)}
+                            value={location}
                         />
                     </div>
                     <div className="space-y-2">
@@ -49,7 +86,7 @@ export default function PostsFilter() {
                                     )}
                                 >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {startDate ? format(startDate, "PPP") : <span>Pick a date</span>}
+                                    {startDate ? format(startDate, "yyyy-MM-dd") : <span>Pick a date</span>}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
@@ -74,7 +111,7 @@ export default function PostsFilter() {
                                     )}
                                 >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {endDate ? format(endDate, "PPP") : <span>Pick a date</span>}
+                                    {endDate ? format(endDate, "yyyy-MM-dd") : <span>Pick a date</span>}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
@@ -87,9 +124,18 @@ export default function PostsFilter() {
                             </PopoverContent>
                         </Popover>
                     </div>
-                    <Button className="w-full" onClick={handleFilter}>
-                        Filter
+                    {areFiltersActive ? <Button className="w-full" onClick={(e) => {
+                        setLocation("");
+                        setStartDate(undefined);
+                        setEndDate(undefined);
+                        handleApplyFilters();
+                    }} variant="destructive">
+                        Remove Filter
                     </Button>
+                        :
+                        <Button className="w-full" onClick={handleApplyFilters} variant="default">
+                            Apply Filter
+                        </Button>}
                 </div>
             </div>
         </div>
