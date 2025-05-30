@@ -10,18 +10,6 @@ import { useRouter } from "next/navigation";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
 
-type PostgresChangePayload = {
-  new?: {
-    id: string;
-    [key: string]: unknown;
-  };
-  old?: {
-    id: string;
-    [key: string]: unknown;
-  };
-  eventType?: 'INSERT' | 'UPDATE' | 'DELETE';
-};
-
 export default function BidPost({ tripId }: { tripId: string }) {
     const [bids, setBids] = useState<BidWithProfile[]>([]);
     const supabase = createClientComponentClient<Database>();
@@ -47,20 +35,32 @@ export default function BidPost({ tripId }: { tripId: string }) {
         fetchBids();
 
         const channel = supabase.channel(`bids:trip_id=eq.${tripId}`)
-            .on('postgres_changes',
-                { event: '*', schema: 'public', table: 'bids' },
-                async (payload: PostgresChangePayload) => {
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'bids',
+                    filter: `trip_id=eq.${tripId}`
+                },
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                async (payload: any) => {
                     // Fetch the updated bid with guide information
+                    const bidId = payload.new?.id || payload.old?.id;
+                    if (!bidId) {
+                        console.error("No bid ID found in payload:", payload);
+                        return;
+                    }
                     const { data: updatedBid, error } = await supabase
                         .from('bids')
                         .select(`
-                            *,
-                            guide:guides!bids_guide_id_fkey (
-                                full_name,
-                                photo_urls
-                            )
-                        `)
-                        .eq('id', payload.new?.id || payload.old?.id)
+                    *,
+                    guide:guides!bids_guide_id_fkey (
+                        full_name,
+                        photo_urls
+                    )
+                `)
+                        .eq('id', bidId)
                         .single();
 
                     if (error) {
@@ -76,13 +76,14 @@ export default function BidPost({ tripId }: { tripId: string }) {
                                 bid.id === updatedBid.id ? (updatedBid as BidWithProfile) : bid
                             )
                         );
-                    } else if (payload.eventType === 'DELETE') {
+                    } else if (payload.eventType === 'DELETE' && payload.old) {
                         setBids((prevBids) =>
-                            prevBids.filter((bid) => bid.id !== payload.old.id)
+                            prevBids.filter((bid) => bid.id !== payload.old?.id)
                         );
                     }
                 }
-            ).subscribe()
+            )
+            .subscribe()
 
         return () => {
             channel.unsubscribe();

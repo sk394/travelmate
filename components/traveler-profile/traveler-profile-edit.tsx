@@ -210,7 +210,7 @@ export function TravelerProfileEdit({ travelerData, userId, setIsEditing }: Trav
                         <FormField
                             control={form.control}
                             name="photo_url"
-                            render={({ _field }) => (
+                            render={({ }) => (
                                 <FormItem>
                                     <FormLabel>Upload/Drop Photo</FormLabel>
                                     <FormControl>

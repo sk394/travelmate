@@ -20,13 +20,13 @@ import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 type TripFormData = z.infer<typeof tripSchema>;
 
 interface DateFieldProps {
-  value: Date | undefined;
-  onChange: (date: Date | undefined) => void;
+    value: Date | undefined;
+    onChange: (date: Date | undefined) => void;
 }
 
 interface NumberFieldProps {
-  value: number | undefined;
-  onChange: (value: number) => void;
+    value: number | undefined;
+    onChange: (value: number) => void;
 }
 
 export default function TripForm() {
@@ -197,9 +197,9 @@ export default function TripForm() {
                                                 type="number"
                                                 min={1}
                                                 placeholder="Add guests"
-                                                onChange={(e) => field.onChange(Number(e.target.value))}
                                                 className="rounded-full border-none bg-transparent h-12 text-black"
                                                 {...field}
+                                                onChange={(e) => field.onChange(Number(e.target.value))}
                                             />
                                         </div>
                                     </FormControl>
