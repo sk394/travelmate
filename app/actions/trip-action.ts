@@ -71,7 +71,7 @@ export async function completeTrip(tripId: string) {
         throw new Error("User not found");
     }
 
-    const { error } = await supabase.rpc('can_complete_trip', { trip_id_param: tripId });
+    const { error } = await supabase.rpc('complete_trip', { trip_id: tripId });
 
     if (error) {
         throw error;
@@ -87,7 +87,7 @@ export async function cancelTrip(tripId: string) {
     if (!user) {
         throw new Error("User not found");
     }
-    const { error } = await supabase.rpc('can_cancel_trip', { trip_id_param: tripId });
+    const { error } = await supabase.rpc('cancel_trip', { trip_id: tripId });
 
     if (error) {
         throw error;

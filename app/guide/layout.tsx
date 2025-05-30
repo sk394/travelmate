@@ -18,7 +18,7 @@ export default function GuideLayout({
                 <Link href="/guide" className="flex p-5 justify-start">
                     <h4 className="text-2xl font-semibold text-zinc-900 dark:text-white">TravelMate</h4>
                 </Link>
-                <main className="w-full flex-1 overflow-hidden px-4 py-4">
+                <main className="flex-1 px-4 py-4">
                     <Header />
                     {children}
                 </main>

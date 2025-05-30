@@ -23,7 +23,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     const location = searchParams?.location ?? null;
     const startDate = searchParams?.startDate ?? null;
     const endDate = searchParams?.endDate ?? null;
-    console.log(searchParams);
+
     let query = supabase.from('trips').select(`*, bids(*)`).eq('bids.guide_id', session.user.id).order('created_at', { ascending: false });
 
     if (location) {
@@ -33,15 +33,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     if (startDate && endDate) {
         query = query.gte('start_date', `${startDate}`).lte('end_date', `${endDate}`);
     }
-    const { data, error } = await query;
-    console.log(data)
+    const { data } = await query;
+
     return (
 
         <>
             <div className="flex flex-1 justify-center items-center">
                 <PostsFilter />
             </div>
-            <div className="flex flex-col mt-4 gap-3 justify-center items-center">
+            <div className="flex flex-col mt-4 gap-3 justify-center items-center ">
                 {data ? <TravellerPosts posts={data} guide_id={session.user.id ?? ""} /> : <div>No trips available</div>}
             </div>
         </>

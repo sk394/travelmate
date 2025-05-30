@@ -9,7 +9,7 @@ export async function updateRating(rating: number, guideId: string, numRatings: 
     const newAverageRating = (currentRating * numRatings + rating) / (numRatings + 1);
 
     // Step 3: Update the average_rating and increment numRatings
-    const { data, error: updateError } = await supabase
+    const { error: updateError } = await supabase
         .from('guides')
         .update({
             average_rating: newAverageRating,

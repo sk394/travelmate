@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { formatDistanceToNow } from "date-fns"
-import { MoreHorizontal, Pencil, Trash2, X } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,17 +23,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { deleteTrip, updateTrip } from "@/app/actions/trip-action"
 import BidPost from "../bids/post-bids"
-
-interface Bid {
-    id: string
-    user: {
-        name: string
-        avatar: string
-    }
-    amount: number
-    message: string
-    createdAt: Date
-}
+import { getStepCount } from "@/app/utils/stepper"
+import { cn } from "@/lib/utils"
 
 export default function TripPost({
     posts
@@ -50,6 +41,23 @@ export default function TripPost({
         setDescription(post.description ?? "");
     }
 
+    // Generate dots based on step count
+    const renderDots = (post: Trip) => {
+        const dots = [];
+
+        for (let i = 0; i < 3; i++) {
+            dots.push(
+                <div
+                    key={i}
+                    className={`h-3 w-3 rounded-full ${i < getStepCount(post)
+                        ? 'bg-orange-500 border-2 border-white'
+                        : 'bg-white/50'
+                        }`}
+                />
+            );
+        }
+        return dots;
+    };
 
     return (
         <>
@@ -140,9 +148,32 @@ export default function TripPost({
                             className="object-cover"
                         />
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                            <h2 className="text-white text-xl font-semibold">
-                                {post.destination}
-                            </h2>
+                            <div className="flex items-center justify-between">
+                                {/* Destination on left */}
+                                <h2 className="text-white text-xl font-semibold w-1/4 truncate text-ellipsis" title={post.destination}>
+                                    {post.destination}
+                                </h2>
+
+                                {/* Stepper line with dots/circles connecting destination to status */}
+                                <div className="flex items-center mx-4 flex-1">
+                                    <div className="h-1 bg-white/30 flex-1 relative">
+                                        <div
+                                            className="absolute top-0 left-0 h-1 bg-orange-500"
+                                            style={{ width: `${(getStepCount(post) / 3) * 100}%` }}
+                                        ></div>
+
+                                        {/* Status dots */}
+                                        <div className="absolute inset-0 flex justify-between items-center">
+                                            {renderDots(post.status)}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Status on right */}
+                                <h2 className={cn("text-xl font-semibold capitalize", post.status === 'canceled' ? 'text-destructive' : post.status === 'completed' ? 'text-green-200' : 'text-white')}>
+                                    {post?.status}
+                                </h2>
+                            </div>
                         </div>
                     </div >
 
@@ -154,11 +185,11 @@ export default function TripPost({
                                     View Bids
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent className="w-[400px]">
+                            <SheetContent className="w-[400px] overflow-y-scroll">
                                 <SheetHeader>
                                     <SheetTitle>Bids</SheetTitle>
                                 </SheetHeader>
-                                <div className="mt-6 space-y-4">
+                                <div className="mt-6 space-y-4 ">
                                     <BidPost tripId={post.id} />
                                 </div>
                             </SheetContent>

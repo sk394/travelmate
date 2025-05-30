@@ -12,8 +12,17 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip';
 
+type NavItem = {
+  title: string;
+  label?: string;
+  icon?: React.ReactNode;
+  href: string;
+  disabled?: boolean;
+  variant?: "default" | "ghost";
+};
+
 interface DashboardNavProps {
-  items: any[];
+  items: NavItem[];
   setOpen?: Dispatch<SetStateAction<boolean>>;
   isMobileNav?: boolean;
 }

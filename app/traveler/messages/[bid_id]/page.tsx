@@ -1,8 +1,6 @@
-import { cancelTrip, completeTrip } from "@/app/actions/trip-action";
 import ChatInput from "@/components/messages/chat-input";
 import ChatMessages from "@/components/messages/chat-messages";
 import FinalizeTrip from "@/components/messages/finalize-trip";
-import { Button } from "@/components/ui/button";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";

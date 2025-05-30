@@ -23,7 +23,7 @@ export default async function ProfilePage({ params }: { params: { sender_id: str
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <TravelerProfilePage traveler={data} userId={session.user.id} showEdit={session.user.id === params.sender_id} />
+            <TravelerProfilePage traveler={data} userId={session.user.id} tripInfo={[]} showEdit={session.user.id === params.sender_id} />
         </Suspense>
     );
 }

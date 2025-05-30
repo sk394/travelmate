@@ -1,13 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "../ui/button";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-import { set } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -52,7 +50,7 @@ export default function CreateBid({ tripId, guideId, bidInfo }: { tripId: string
         return () => {
             realtimeBid.unsubscribe();
         }
-    }, [supabase]);
+    }, [supabase, tripId, highestBid, router]);
 
     async function onSubmit(data: z.infer<typeof bidSchema>) {
         await createBid({

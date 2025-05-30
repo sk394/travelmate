@@ -74,14 +74,14 @@ export default function ListMessages({ userId }: { userId: string }) {
         return () => {
             channel.unsubscribe();
         };
-    }, [messages]);
+    }, [messages, addMessage, optimisticDeleteMessage, optimisticIds, optimisticUpdateMessage, supabase]);
 
     useEffect(() => {
         const scrollContainer = scrollRef.current;
         if (scrollContainer && !userScrolled) {
             scrollContainer.scrollTop = scrollContainer.scrollHeight;
         }
-    }, [messages]);
+    }, [messages, userScrolled]);
 
     const handleOnScroll = () => {
         const scrollContainer = scrollRef.current;
@@ -117,9 +117,6 @@ export default function ListMessages({ userId }: { userId: string }) {
                         return <Message key={index} message={value as MessageWithProfile} isCurrentUser={value.sender_id === userId} />;
                     })}
                 </div>
-
-                {/* <DeleteAlert />
-				<EditAlert /> */}
             </div>
             {userScrolled && (
                 <div className=" absolute bottom-20 w-full">

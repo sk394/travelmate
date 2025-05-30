@@ -1,5 +1,4 @@
 import { Database as DB } from "@/lib/database.types";
-import { Profiler } from "node:inspector/promises";
 
 type Profile = DB["public"]["Tables"]["profiles"]["Row"];
 

@@ -3,13 +3,11 @@
 import {
   createClientComponentClient,
 } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { FcGoogle } from "react-icons/fc";
 
 export default function GithubAuthButton() {
   const supabase = createClientComponentClient<Database>();
-  const router = useRouter();
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
@@ -19,8 +17,8 @@ export default function GithubAuthButton() {
       },
     });
   };
- 
-  return(
+
+  return (
     <Button className="w-full text-zinc-950 py-6 dark:text-white" variant="outline" type="button" onClick={handleSignIn}>
       <span className="mr-2"><FcGoogle className="h-5 w-5" /> </span>
       <span>Sign in with Google</span>

@@ -2,20 +2,37 @@
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Camera, Star, Verified } from "lucide-react";
+import { Star, Verified } from "lucide-react";
 import { useState } from "react";
 import { updateRating } from "@/app/actions/profile-actions";
+import { UploadDropzone } from "@/app/utils/uploadthing";
+import { updateGuidePhotos } from "@/app/actions/guide-actions";
 
 export default function GuideProfile({ guide, isGuide }: { guide: Guides; isGuide?: boolean }) {
     const [selectedRating, setSelectedRating] = useState<number>(0)
+    const [isUploading, setIsUploading] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
     const [hoveredRating, setHoveredRating] = useState<number | null>(null)
     const displayRating = hoveredRating ?? selectedRating ?? 0;
-    async function handleAddPhoto() {
-        console.log("Add photo");
-    }
+
+    const handleUploadComplete = async (res: { url: string }[]) => {
+        try {
+            setIsUploading(true);
+
+            // Extract URLs from upload response
+            const newUrls = res.map((file) => file.url);
+
+            // Update the guide's photo_urls in the database
+            await updateGuidePhotos(guide.id, newUrls);
+        } catch (err) {
+            setError(`Error saving photos: ${(err as Error).message}`);
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     return (
-        <div className="container mx-auto max-w-4xl py-8 px-4" >
+        <div className="container mx-auto max-w-6xl py-9 px-4" >
             <Card className="overflow-hidden">
                 <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row gap-6">
@@ -69,10 +86,10 @@ export default function GuideProfile({ guide, isGuide }: { guide: Guides; isGuid
                             </div>
                         </div>
                     </div>
-                    <div className="mt-8">
+                    <div className="flex flex-wrap mt-8">
                         <h2 className="text-2xl font-bold mb-4">Photos</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {guide?.photo_urls?.map((photourl, index) => (
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {guide?.photo_urls?.slice(0).map((photourl, index) => (
                                 <img
                                     key={index}
                                     src={photourl}
@@ -80,13 +97,21 @@ export default function GuideProfile({ guide, isGuide }: { guide: Guides; isGuid
                                     className="w-full h-48 object-cover rounded-lg shadow-lg hover:blur-sm"
                                 />
                             ))}
-                            {isGuide && <Button
-                                onClick={handleAddPhoto}
-                                className="w-full h-48 flex flex-col items-center justify-center text-muted-foreground hover:text-foreground border-2 border-dashed border-muted-foreground hover:border-foreground rounded-lg transition-colors"
-                            >
-                                <Camera className="w-8 h-8 mb-2" />
-                                Add New Photo
-                            </Button>}
+                            {isGuide &&
+                                <div
+                                    className="w-[120%] h-48 flex flex-col 
+                                         items-center justify-center text-muted-foreground hover:text-foreground border-2 border-dashed border-muted-foreground hover:border-foreground rounded-lg transition-colors">
+                                    <UploadDropzone
+                                        endpoint="imageUploader"
+                                        className="text-white font-bold py-2 rounded"
+                                        onClientUploadComplete={handleUploadComplete}
+                                        onUploadError={(error) => {
+                                            alert(`ERROR! ${error.message}`);
+                                        }}
+                                    />
+                                    {isUploading && <p className="text-blue-600">Saving your photos...</p>}
+                                    {error && <p className="text-red-600">{error}</p>}
+                                </div>}
                             {!isGuide &&
                                 // Rating and review section
                                 <div className="mt-8">

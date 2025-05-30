@@ -7,6 +7,20 @@ import { formatDistanceToNow } from "date-fns";
 import { Button } from "../ui/button";
 import { acceptBid } from "@/app/actions/bid-actions";
 import { useRouter } from "next/navigation";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link";
+
+type PostgresChangePayload = {
+  new?: {
+    id: string;
+    [key: string]: unknown;
+  };
+  old?: {
+    id: string;
+    [key: string]: unknown;
+  };
+  eventType?: 'INSERT' | 'UPDATE' | 'DELETE';
+};
 
 export default function BidPost({ tripId }: { tripId: string }) {
     const [bids, setBids] = useState<BidWithProfile[]>([]);
@@ -27,7 +41,7 @@ export default function BidPost({ tripId }: { tripId: string }) {
         } else {
             setBids(data as BidWithProfile[]);
         }
-    }, []);
+    }, [supabase, tripId]);
 
     useEffect(() => {
         fetchBids();
@@ -35,7 +49,7 @@ export default function BidPost({ tripId }: { tripId: string }) {
         const channel = supabase.channel(`bids:trip_id=eq.${tripId}`)
             .on('postgres_changes',
                 { event: '*', schema: 'public', table: 'bids' },
-                async (payload: any) => {
+                async (payload: PostgresChangePayload) => {
                     // Fetch the updated bid with guide information
                     const { data: updatedBid, error } = await supabase
                         .from('bids')
@@ -73,7 +87,7 @@ export default function BidPost({ tripId }: { tripId: string }) {
         return () => {
             channel.unsubscribe();
         }
-    }, [fetchBids])
+    }, [fetchBids, supabase, tripId])
 
     return (
         <>
@@ -83,10 +97,12 @@ export default function BidPost({ tripId }: { tripId: string }) {
                         key={bid.id}
                         className="flex items-start gap-4 p-4 rounded-lg bg-muted/40"
                     >
-                        <Avatar>
-                            <AvatarImage src={""} alt="Guide Name" />
-                            <AvatarFallback>{bid.guide.full_name.split(" ").map((n) => n[0]).join(".")}</AvatarFallback>
-                        </Avatar>
+                        <Link href={`/guide/profile/${bid.guide_id}`} title="View Guide Profile">
+                            <Avatar>
+                                <AvatarImage src={""} alt="Guide Name" />
+                                <AvatarFallback>{bid.guide.full_name.split(" ").map((n) => n[0]).join(".")}</AvatarFallback>
+                            </Avatar>
+                        </Link>
                         <div className="flex-1">
                             <div className="flex items-center justify-between">
                                 <h4 className="font-semibold">{bid.guide.full_name}</h4>
@@ -95,24 +111,36 @@ export default function BidPost({ tripId }: { tripId: string }) {
                                 </p>
                             </div>
                             <p className="mt-1 text-sm">{bid.itinerary}</p>
-                            <Button variant="outline" className="w-full mt-4 rounded"
-                                onClick={
-                                    async () => {
-                                        if (bid.status === 'pending') {
-                                            await acceptBid(bid.id)
-                                        } else if (bid.status === 'accepted') {
-                                            router.push(`/traveler/messages/${bid.id}?trip_id=${tripId}`)
-                                        } else {
-                                            console.log("Bid Rejected")
-                                        }
-                                    }}
-                            >
-                                <span className="font-semibold text-primary">
-                                    {bid.status === 'pending' ? 'Accept' :
-                                        bid.status === 'accepted' ? 'Accepted' :
-                                            bid.status === 'rejected' ? 'Rejected' : null}  ${bid.amount.toLocaleString()}
-                                </span>
-                            </Button>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="outline" className="w-full mt-4 rounded"
+                                            onClick={
+                                                async () => {
+                                                    if (bid.status === 'pending') {
+                                                        await acceptBid(bid.id)
+                                                    } else if (bid.status === 'accepted') {
+                                                        router.push(`/traveler/messages/${bid.id}?trip_id=${tripId}`)
+                                                    } else {
+                                                        console.log("Bid Rejected")
+                                                    }
+                                                }}
+                                        >
+                                            <span className="font-semibold text-primary">
+                                                {bid.status === 'pending' ? 'Accept' :
+                                                    bid.status === 'accepted' ? 'Accepted' :
+                                                        bid.status === 'rejected' ? 'Rejected' : null}  ${bid.amount.toLocaleString()}
+                                            </span>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    {bid.status === 'accepted' && <TooltipContent>
+                                        <p className="text-sm ">
+                                            You have accepted this bid. Click to chat with the guide.
+                                        </p>
+                                    </TooltipContent>
+                                    }
+                                </Tooltip>
+                            </TooltipProvider>
                         </div>
                     </div>))
             }

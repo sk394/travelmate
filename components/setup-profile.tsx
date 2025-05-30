@@ -28,7 +28,7 @@ export default function SetUpProfileComponent({ userId }: { userId: string }) {
 
     const supabase = createClientComponentClient<Database>();
     async function onSubmit(data: z.infer<typeof schema>) {
-        const { data: roleFunction, error: RoleError } = await supabase.rpc(
+        const { error: RoleError } = await supabase.rpc(
             profileType === 'guide' ? 'set_user_as_guide' : 'set_user_as_traveler',
             { user_id: userId }
         );

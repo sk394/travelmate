@@ -24,7 +24,17 @@ export default async function DashboardPage() {
     )
   `).eq("traveler_id", user.id).order('created_at', { ascending: false });
 
-  const trips = (data as any)?.map((trip: any) => ({
+  type TripData = {
+    profiles?: {
+      travelers?: {
+        full_name: string;
+        photo_url: string | null;
+      };
+    };
+    [key: string]: unknown;
+  };
+  
+  const trips = (data as TripData[] | null)?.map((trip: TripData) => ({
     ...trip,
     profiles: {
       travelers: trip.profiles?.travelers ?? {

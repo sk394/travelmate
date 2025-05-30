@@ -12,6 +12,8 @@ import { travelerSchema } from '@/lib/schema'
 import { SubmitButton } from '../ui/submit-button'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
+import { UploadDropzone } from '@/app/utils/uploadthing'
+import { useState } from 'react'
 
 type TravelerFormData = z.infer<typeof travelerSchema>
 
@@ -28,12 +30,15 @@ export function TravelerProfileEdit({ travelerData, userId, setIsEditing }: Trav
     })
     const router = useRouter();
     const supabase = createClientComponentClient<Database>()
+    const [imageUrl, setImageUrl] = useState("");
 
     async function onSubmit(data: TravelerFormData) {
         const { error } = await supabase.from('travelers').upsert({
             id: userId,
-            ...data
+            ...data,
+            photo_url: imageUrl,
         });
+
         if (error) {
             console.error(error)
             return;
@@ -41,6 +46,19 @@ export function TravelerProfileEdit({ travelerData, userId, setIsEditing }: Trav
         router.refresh();
         setIsEditing(false);
     }
+
+    const handlePhotoUploadComplete = async (res: { url: string }[]) => {
+        try {
+            setImageUrl(res[0].url)
+            await supabase.from('travelers').upsert({
+                id: userId,
+                ...travelerData,
+                photo_url: imageUrl,
+            });
+        } catch (err) {
+            console.error(`Error saving photos: ${(err as Error).message}`);
+        }
+    };
 
     return (
         <Card>
@@ -192,11 +210,18 @@ export function TravelerProfileEdit({ travelerData, userId, setIsEditing }: Trav
                         <FormField
                             control={form.control}
                             name="photo_url"
-                            render={({ field }) => (
+                            render={({ _field }) => (
                                 <FormItem>
-                                    <FormLabel>Photo URL</FormLabel>
+                                    <FormLabel>Upload/Drop Photo</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <UploadDropzone
+                                            endpoint="imageUploader"
+                                            className="text-white font-bold py-2 rounded"
+                                            onClientUploadComplete={handlePhotoUploadComplete}
+                                            onUploadError={(error) => {
+                                                alert(`ERROR! ${error.message}`);
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

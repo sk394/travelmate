@@ -2,8 +2,11 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+// Adding a specific property to avoid the empty interface warning
 export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    className?: string; // Optional className for additional styling
+}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, ...props }, ref) => {

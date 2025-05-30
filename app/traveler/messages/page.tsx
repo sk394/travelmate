@@ -1,6 +1,3 @@
-import ChatInput from "@/components/messages/chat-input";
-import ChatMessages from "@/components/messages/chat-messages";
-import InitMessages from "@/components/messages/init-messages";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";

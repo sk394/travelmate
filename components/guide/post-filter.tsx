@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,7 +14,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useDebouncedCallback } from 'use-debounce';
 
 export default function PostsFilter() {
     const searchParams = useSearchParams();
@@ -124,7 +123,7 @@ export default function PostsFilter() {
                             </PopoverContent>
                         </Popover>
                     </div>
-                    {areFiltersActive ? <Button className="w-full" onClick={(e) => {
+                    {areFiltersActive ? <Button className="w-full" onClick={(_e) => {
                         setLocation("");
                         setStartDate(undefined);
                         setEndDate(undefined);

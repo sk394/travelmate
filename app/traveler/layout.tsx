@@ -16,7 +16,9 @@ export default function DashboardLayout({
         <>
             <div className="flex h-screen ">
                 <Link href="/traveler" className="flex p-5 justify-start">
-                    <h4 className="text-2xl font-semibold text-zinc-900 dark:text-white">TravelMate</h4>
+                    <h4 className="text-2xl font-semibold text-zinc-900 dark:text-white">
+                        TravelMate
+                    </h4>
                 </Link>
                 <main className="flex-1 px-4 py-4">
                     <Header />

@@ -1,4 +1,4 @@
-import { hostname } from "os";
+
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -18,7 +18,10 @@ const nextConfig = {
       },
       {
         hostname: "www.ggg.jpg",
-      }
+      },
+      {
+        hostname: 'utfs.io',
+    }
     ],
   },
 };

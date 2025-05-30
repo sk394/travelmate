@@ -11,7 +11,7 @@ export default function FinalizeTrip({ tripId }: { tripId: string }) {
                     return await cancelTrip(tripId ?? "")
                 }
             }>Cancel Trip</Button>
-            <Button variant="secondary" className="bg-green-700 font-extrabold " onClick={
+            <Button variant="secondary" className="bg-green-800 text-white font-extrabold " onClick={
                 async () => {
                     return await completeTrip(tripId ?? "")
                 }

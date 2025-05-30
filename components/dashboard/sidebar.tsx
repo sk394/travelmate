@@ -4,7 +4,7 @@ import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, LayoutDashboard, MessageSquareDot, Plane, UserRound } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 type SidebarProps = {
   className?: string;

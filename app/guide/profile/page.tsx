@@ -1,7 +1,7 @@
 import GuideProfile from "@/components/guide/guide-profile";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function ProfilePage() {
@@ -23,7 +23,7 @@ export default async function ProfilePage() {
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <GuideProfile guide={data} />
+            <GuideProfile guide={data} isGuide />
         </Suspense>
     );
 }

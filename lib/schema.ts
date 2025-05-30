@@ -11,7 +11,7 @@ export const travelerSchema = z.object({
     age: z.number().min(18, "Must be at least 18 years old"),
     gender: z.enum(["male", "female", "other", "prefer_not_to_say"]),
     bio: z.string().min(10, "Bio must be at least 10 characters"),
-    photo_url: z.string().url().optional()
+    photo_url: z.string()
 });
 
 export const guideSchema = z.object({
