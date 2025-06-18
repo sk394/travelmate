@@ -16,4 +16,4 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can find teh detailed report on about this @ [here](https://ideaexchange.uakron.edu/honors_research_projects/1944/)
+You can find the detailed report on about this @ [here](https://ideaexchange.uakron.edu/honors_research_projects/1944/)
